@@ -1,0 +1,6 @@
+$!/bin/bash 
+./0-install-utilities.sh
+./1-generate-certs.sh
+./2-generate-config-files.sh
+./3-generate-encryption-key.sh
+./4-bootstrap-etcd-cluster.sh
