@@ -50,10 +50,10 @@ EOF
   "names": [
     {
       "C": "US",
-      "L": "Portland",
+      "L": "Austin",
       "O": "Kubernetes",
       "OU": "CA",
-      "ST": "Oregon"
+      "ST": "Texas"
     }
   ]
 }
@@ -75,10 +75,10 @@ generate_admin_cert() {
   "names": [
     {
       "C": "US",
-      "L": "Portland",
+      "L": "Austin",
       "O": "system:masters",
       "OU": "Kubernetes The Hard Way",
-      "ST": "Oregon"
+      "ST": "Texas"
     }
   ]
 }
@@ -169,10 +169,10 @@ generate_kube_proxy_client_cert() {
   "names": [
     {
       "C": "US",
-      "L": "Portland",
+      "L": "Austin",
       "O": "system:node-proxier",
       "OU": "Kubernetes The Hard Way",
-      "ST": "Oregon"
+      "ST": "Texas"
     }
   ]
 }
@@ -217,8 +217,8 @@ EOF
 
 generate_api_server_cert() {
     echo "Generating API server cert..."
-    KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
 
+    KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
     cat > kubernetes-csr.json <<EOF
 {
   "CN": "kubernetes",
@@ -242,7 +242,7 @@ EOF
       -ca=ca.pem \
       -ca-key=ca-key.pem \
       -config=ca-config.json \
-      -hostname=${KUBERNETES_MASTER_IP_ADDRESS},${K8S_CONTROLLER_IP_ADDR[0]},${K8S_CONTROLLER_IP_ADDR[1]},${K8S_CONTROLLER_IP_ADDR[2]},127.0.0.1,${KUBERNETES_HOSTNAMES} \
+      -hostname=${K8S_MASTER_IP_ADDR},${K8S_CONTROLLER_IP_ADDR[0]},${K8S_CONTROLLER_IP_ADDR[1]},${K8S_CONTROLLER_IP_ADDR[2]},${K8S_MASTER_HOSTNAME},127.0.0.1,${KUBERNETES_HOSTNAMES} \
       -profile=kubernetes \
       kubernetes-csr.json | cfssljson -bare kubernetes
   --initial-cluster ${K8S_CONTROLLER[0]}=https://

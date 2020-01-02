@@ -1,6 +1,11 @@
-$!/bin/bash 
-./0-install-utilities.sh
+#!/bin/bash  -x
+#./0-install-utilities.sh
 ./1-generate-certs.sh
 ./2-generate-config-files.sh
 ./3-generate-encryption-key.sh
 ./4-bootstrap-etcd-cluster.sh
+./5-bootstrap-control-plane.sh
+./6-kubelet-rbac.sh
+./7-provision-frontend-lb.sh
+./8-bootstrap-worker-nodes.sh
+./9-configure-kubectl.sh

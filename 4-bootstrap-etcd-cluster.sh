@@ -82,6 +82,7 @@ start_etcd_service() {
   for ((i=0;i<K8S_CONTROLLER_COUNT;i++)) do
     instance=${K8S_CONTROLLER[$i]}
 
+    echo
     echo "Starting etcd service on $instance..."
     cat <<EOF3 | ssh -i $K8S_ADMIN_SSH_KEY $K8S_ADMIN_USER@$instance &
       sudo systemctl stop etcd

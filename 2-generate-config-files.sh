@@ -14,10 +14,13 @@ main() {
     generate_kube_controller_config_file
     generate_kube_scheduler_config_file
     generate_kube_admin_config_file
+
     provision_worker_config_files
+    provision_controller_config_files
 }
 
 generate_worker_config_files() {
+    echo
     echo "Generating worker config files..."
     for ((i=0;i<K8S_WORKER_COUNT;i++)) do
       instance=${K8S_WORKER[$i]}
@@ -25,7 +28,7 @@ generate_worker_config_files() {
       kubectl config set-cluster kubernetes-the-hard-way \
         --certificate-authority=ca.pem \
         --embed-certs=true \
-        --server=https://${KUBERNETES_MASTER_IP_ADDRESS}:6443 \
+        --server=https://${K8S_MASTER_IP_ADDR}:6443 \
         --kubeconfig=${instance}.kubeconfig
 
       kubectl config set-credentials system:node:${instance} \
@@ -44,11 +47,12 @@ generate_worker_config_files() {
 }
 
 generate_kube_proxy_config_file() {
+  echo
   echo "Generating kube proxy config file..."
   kubectl config set-cluster kubernetes-the-hard-way \
     --certificate-authority=ca.pem \
     --embed-certs=true \
-    --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
+    --server=https://${K8S_MASTER_IP_ADDR}:6443 \
     --kubeconfig=kube-proxy.kubeconfig
 
   kubectl config set-credentials system:kube-proxy \
@@ -66,6 +70,7 @@ generate_kube_proxy_config_file() {
 }
 
 generate_kube_controller_config_file() {
+  echo
   echo "Generating kube controller config file..."
   kubectl config set-cluster kubernetes-the-hard-way \
     --certificate-authority=ca.pem \
@@ -88,6 +93,7 @@ generate_kube_controller_config_file() {
 }
 
 generate_kube_scheduler_config_file() {
+  echo
   echo "Generating kube scheduler config file..."
   kubectl config set-cluster kubernetes-the-hard-way \
     --certificate-authority=ca.pem \
@@ -110,6 +116,7 @@ generate_kube_scheduler_config_file() {
 }
 
 generate_kube_admin_config_file() {
+  echo
   echo "Generating kube admin config file..."
   kubectl config set-cluster kubernetes-the-hard-way \
     --certificate-authority=ca.pem \
@@ -132,10 +139,21 @@ generate_kube_admin_config_file() {
 }
 
 provision_worker_config_files() {
-    echo "Provisioning worker config files..."
+    echo
     for ((i=0;i<K8S_WORKER_COUNT;i++)) do
       instance=${K8S_WORKER[$i]}
+      echo "Provisioning worker config files for $instance..."
       scp -i $K8S_ADMIN_SSH_KEY ${instance}.kubeconfig kube-proxy.kubeconfig $K8S_ADMIN_USER@${instance}:~/
     done
 }
+
+provision_controller_config_files() {
+    echo
+    for ((i=0;i<K8S_CONTROLLER_COUNT;i++)) do
+      instance=${K8S_CONTROLLER[$i]}
+      echo "Provisioning controller config files for $instance..."
+      scp -i $K8S_ADMIN_SSH_KEY admin.kubeconfig kube-controller-manager.kubeconfig kube-scheduler.kubeconfig $K8S_ADMIN_USER@${instance}:~/
+    done
+}
+
 main "$@"

@@ -7,10 +7,10 @@
   "names": [
     {
       "C": "US",
-      "L": "Portland",
+      "L": "Austin",
       "O": "system:node-proxier",
       "OU": "Kubernetes The Hard Way",
-      "ST": "Oregon"
+      "ST": "Texas"
     }
   ]
 }

@@ -5,6 +5,8 @@
 # Installs the following components on each node: Kubernetes API Server, Scheduler, and Controller Manager.
 #
 # from: https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/08-bootstrapping-kubernetes-controllers.md
+#
+# NOTE: deleted NodeRestriction admission controller plugin to work around RBAC issue w/ API server's ability to register nodes. See: https://github.com/kubernetes/kubernetes/issues/47695#issuecomment-342279247
 
 source ./k8s-cluster.config
 
@@ -67,7 +69,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --authorization-mode=Node,RBAC \\
   --bind-address=0.0.0.0 \\
   --client-ca-file=/var/lib/kubernetes/ca.pem \\
-  --enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \\
+  --enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \\
   --etcd-cafile=/var/lib/kubernetes/ca.pem \\
   --etcd-certfile=/var/lib/kubernetes/kubernetes.pem \\
   --etcd-keyfile=/var/lib/kubernetes/kubernetes-key.pem \\
@@ -80,7 +82,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --kubelet-https=true \\
   --runtime-config=api/all \\
   --service-account-key-file=/var/lib/kubernetes/service-account.pem \\
-  --service-cluster-ip-range=${K8S_CLUSTER_IP_RANGE} \\
+  --service-cluster-ip-range=${K8S_SERVICE_CLUSTER_IP_RANGE} \\
   --service-node-port-range=30000-32767 \\
   --tls-cert-file=/var/lib/kubernetes/kubernetes.pem \\
   --tls-private-key-file=/var/lib/kubernetes/kubernetes-key.pem \\
@@ -119,7 +121,7 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --leader-elect=true \\
   --root-ca-file=/var/lib/kubernetes/ca.pem \\
   --service-account-private-key-file=/var/lib/kubernetes/service-account-key.pem \\
-  --service-cluster-ip-range=${K8S_CLUSTER_IP_RANGE} \\
+  --service-cluster-ip-range=${K8S_SERVICE_CLUSTER_IP_RANGE} \\
   --use-service-account-credentials=true \\
   --v=2
 Restart=on-failure
